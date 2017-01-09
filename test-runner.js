@@ -1,17 +1,4 @@
-const { describe, test } = require('./mixtape')
+const pad = n => n < 10 ? ('0'+n) : n
 
-describe('lol', [
-  describe('mdr', [
-    test('synchronous 5')
-      .call(() => 5)
-      .equal(5)
-      .notEqual(10)
-      .equal(undefined)
-    ,
-    test('Asynchronous 5')
-      .call(() => new Promise(s => setTimeout(() => s(5), 2)))
-      .equal(5)
-      .notEqual(undefined)
-    ,
-  ])
-])()
+Array(1).fill().map((_, i) =>
+  require(`./ex${pad(i)}.test.js`))

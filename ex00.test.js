@@ -16,7 +16,8 @@ describe('ex00', [
       .call(() => ex00.add(5, -5))
       .equal(5 + -5)
     ,
-  ])
+  ]),
+
   describe('sub', [
     test('function sub is exported')
       .value(ex00.sub)
@@ -30,7 +31,7 @@ describe('ex00', [
       .call(() => ex00.sub(5, -5))
       .equal(5 - -5)
     ,
-  ])
+  ]),
 
   describe('multiply', [
     test('function multiply is exported')
@@ -45,5 +46,5 @@ describe('ex00', [
       .call(() => ex00.multiply(5, -5))
       .equal(5 * -5)
     ,
-  ])
+  ]),
 ])()

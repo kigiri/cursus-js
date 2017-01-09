@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "test": "node test-runner.js"
+  },
   "dependencies": {
     "blue-tape": "^1.0.0"
   }
