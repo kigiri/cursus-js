@@ -36,15 +36,38 @@ describe('ex00', [
   describe('multiply', [
     test('function multiply is exported')
       .value(ex00Text)
-      .exclude('*', 'You can not use the opperator `*`, try harder !')
+      .exclude('*', 'he opperator `*` should not be used')
     ,
-    test('multiply 2 numbers (5 + 5)')
+    test('multiply 2 numbers (5 * 5)')
       .call(() => ex00.multiply(5, 5))
       .equal(5 * 5)
     ,
-    test('multiply negative numbers (5 + -5)')
+    test('multiply negative numbers (5 * -5)')
       .call(() => ex00.multiply(5, -5))
       .equal(5 * -5)
+    ,
+    test('multiply negative numbers (-5 * -5)')
+      .call(() => ex00.multiply(-5, -5))
+      .equal(-5 * -5)
+    ,
+    test('multiply negative numbers (-5 * 5)')
+      .call(() => ex00.multiply(-5, 5))
+      .equal(-5 * 5)
+    ,
+  ]),
+
+  describe('divide', [
+    test('function divide is exported')
+      .value(ex00.divide)
+      .exclude('/', 'the opperator `/` should not be used')
+    ,
+    test('divide 2 numbers (5 / 2)')
+      .call(() => ex00.divide(5, 2))
+      .equal(Math.floor(5 / 2))
+    ,
+    test('divide negative numbers (100 / 22)')
+      .call(() => ex00.divide(100, 22))
+      .equal(Math.floor(100 / 22))
     ,
   ]),
 ])()
