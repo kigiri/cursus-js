@@ -60,15 +60,55 @@ describe('ex00', [
   describe('divide', [
     test('function divide is exported')
       .value(ex00.divide)
+      .isA(Function)
       .exclude('/', 'the opperator `/` should not be used')
     ,
     test('divide 2 numbers (5 / 2)')
       .call(() => ex00.divide(5, 2))
       .equal(Math.floor(5 / 2))
     ,
-    test('divide negative numbers (100 / 22)')
+    test('divide 2 numbers (100 / 22)')
       .call(() => ex00.divide(100, 22))
       .equal(Math.floor(100 / 22))
     ,
   ]),
+
+  describe('modulo', [
+    test('function modulo is exported')
+      .value(ex00.modulo)
+      .isA(Function)
+      .exclude('%', 'the opperator `%` should not be used')
+    ,
+    test('modulo 2 numbers (5 % 2)')
+      .call(() => ex00.modulo(5, 2))
+      .equal(Math.floor(5 % 2))
+    ,
+    test('modulo 2 numbers (100 % 22)')
+      .call(() => ex00.modulo(100, 22))
+      .equal(Math.floor(100 % 22))
+    ,
+  ]),
+
+  describe('call', [
+      test('function call is exported')
+        .value(ex00.call)
+        .isA(Function)
+      ,
+      test('function call should return a function')
+        .value(ex00.call())
+        .isA(Function)
+      ,
+      test('call(add, 5) -> then with 2')
+        .call(() => ex00.call(ex00.add, 5)(2))
+        .equal(ex00.add(5, 2))
+      ,
+      test('call(sub, 5) -> then with 2')
+        .call(() => ex00.call(ex00.sub, 5)(2))
+        .equal(ex00.sub(5, 2))
+      ,
+      test('call((a, b) => (a++) * 2 + b, 5) -> then with 2')
+        .call(() => ex00.call((a, b) => (a++) * 2 + b, 5)(2))
+        .equal((a, b) => (a++) * 2 + b)(5, 2))
+      ,
+    ]),
 ])()

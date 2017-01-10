@@ -1,46 +1,40 @@
-// Restrictions: `require` is prohibed and only the mathematical operators
-// `-` and `+` are allowed.
+# ex00
+*variables loops and functions*
 
 
-
-// export the function `add`:
-// it must take 2 numbers and add them together
-// const add = 
+### export the function `add`:
+- takes 2 numbers and add them together
 
 
-// export the function `sub`:
-// it must take 2 numbers and substract them from left to right
-
-// const sub =
+### export the function `sub`:
+- takes 2 numbers and substract them
 
 
-// export the function `multiply`:
-// it must take 2 numbers and multiply them
-// only using your function `add`, `sub` and the `while` loop
-// const multiply = 
+### export the function `multiply`:
+- takes 2 integers multiply them
 
-const multiply = (a, b) => {
-  if (!a || !b) return 0
-  let sign = true
-  if (a < 0) {
-    sign = !sign
-    a = -a
-  }
-  if (b < 0) {
-    sign = !sign
-    b = -b
-  }
-  let result = b
-  while (--a) {
-    result += b
-  }
-  return sign ? result : -result
-}
+*you may not use any mathematical opperator (use your functions !)*
 
-module.exports.multiply = multiply
 
-// export the function `divide`:
-// it must take 2 numbers and divide them from left to right
-// only using your function `add`, `sub` and the `while` loop
-// const divide = 
+### export the function `divide`:
+it must take 2 integers and divide them
 
+*you may not use any mathematical opperator (use your functions !)*
+
+
+### export the function `modulo`:
+it must take 2 numbers and divide them
+
+*you may not use any mathematical opperator (use your functions !)*
+
+
+### export the function `call`
+- takes 3 arguments, first a function, then 2 integer
+- return the result of the function and it's 2 arguments
+
+
+### export the function `curry`
+- takes 2 arguments, first a function `f`, then an integer `a`
+- return a function that:
+  - take 1 integer `b`
+  - return the result of `f` called with `a` and `b`
