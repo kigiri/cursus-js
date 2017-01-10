@@ -3,6 +3,7 @@
     "test": "node test-runner.js"
   },
   "dependencies": {
+    "acorn": "^4.0.4",
     "blue-tape": "^1.0.0"
   }
 }

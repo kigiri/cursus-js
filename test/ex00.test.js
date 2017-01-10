@@ -1,6 +1,6 @@
-const { describe, test } = require('./mixtape')
-const ex00 = require('./ex00')
-const ex00Text = fs.readFileSync('./ex00')
+const { describe, test } = require('../lib/mixtape')
+const ex00 = require('../exercise/ex00')
+const ex00Text = fs.readFileSync('../exercise/ex00')
 
 describe('ex00', [
   describe('add', [
@@ -38,11 +38,11 @@ describe('ex00', [
       .value(ex00Text)
       .exclude('*', 'You can not use the opperator `*`, try harder !')
     ,
-    test('substracting 2 numbers (5 + 5)')
+    test('multiply 2 numbers (5 + 5)')
       .call(() => ex00.multiply(5, 5))
       .equal(5 * 5)
     ,
-    test('substracting negative numbers (5 + -5)')
+    test('multiply negative numbers (5 + -5)')
       .call(() => ex00.multiply(5, -5))
       .equal(5 * -5)
     ,

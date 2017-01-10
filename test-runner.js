@@ -1,4 +1,3 @@
-const pad = n => n < 10 ? ('0'+n) : n
+const fs = require('fs')
 
-Array(1).fill().map((_, i) =>
-  require(`./ex${pad(i)}.test.js`))
+fs.readdirSync('test').map(file => `./test/${file}`).forEach(require)
