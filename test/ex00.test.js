@@ -104,7 +104,7 @@ describe('ex00', [
     ,
     test('call((a, b) => (a++) * 2 + b, 5, 2)')
       .call(() => ex00.call((a, b) => (a++) * 2 + b, 5, 2))
-      .equal((a, b) => (a++) * 2 + b)(5, 2))
+      .equal(((a, b) => (a++) * 2 + b)(5, 2))
     ,
   ]),
 
@@ -127,7 +127,7 @@ describe('ex00', [
     ,
     test('curry((a, b) => (a++) * 2 + b, 5) -> then with 2')
       .call(() => ex00.curry((a, b) => (a++) * 2 + b, 5)(2))
-      .equal((a, b) => (a++) * 2 + b)(5, 2))
+      .equal(((a, b) => (a++) * 2 + b)(5, 2))
     ,
   ]),
 ])()
