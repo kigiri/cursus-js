@@ -1,6 +1,7 @@
+const fs = require('fs')
 const { describe, test } = require('../lib/mixtape')
 const ex00 = require('../exercise/ex00')
-const ex00Text = fs.readFileSync('../exercise/ex00')
+const ex00Text = fs.readFileSync('./exercise/ex00.js')
 
 describe('ex00', [
   describe('add', [
