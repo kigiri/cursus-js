@@ -96,11 +96,11 @@ describe('ex00', [
     ,
     test('call(add, 5, 2)')
       .call(() => ex00.call(ex00.add, 5, 2))
-      .equal(ex00.add(5, 2))
+      .equal(5 + 2)
     ,
     test('call(sub, 5) -> then with 2')
       .call(() => ex00.call(ex00.sub, 5, 2))
-      .equal(ex00.sub(5, 2))
+      .equal(5 - 2)
     ,
     test('call((a, b) => (a++) * 2 + b, 5, 2)')
       .call(() => ex00.call((a, b) => (a++) * 2 + b, 5, 2))
@@ -114,16 +114,16 @@ describe('ex00', [
       .isA(Function)
     ,
     test('function curry should return a function')
-      .value(ex00.curry())
+      .value(ex00.curry && ex00.curry())
       .isA(Function)
     ,
     test('curry(add, 5) -> then with 2')
       .call(() => ex00.curry(ex00.add, 5)(2))
-      .equal(ex00.add(5, 2))
+      .equal(5 + 2)
     ,
     test('curry(sub, 5) -> then with 2')
       .call(() => ex00.curry(ex00.sub, 5)(2))
-      .equal(ex00.sub(5, 2))
+      .equal(5 - 2)
     ,
     test('curry((a, b) => (a++) * 2 + b, 5) -> then with 2')
       .call(() => ex00.curry((a, b) => (a++) * 2 + b, 5)(2))
