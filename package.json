@@ -1,9 +1,12 @@
 {
   "scripts": {
-    "test": "node test-runner.js"
+    "test": "node test-runner.js | ./bin/dot.js"
   },
   "dependencies": {
     "acorn": "^4.0.4",
-    "blue-tape": "^1.0.0"
+    "blue-tape": "^1.0.0",
+    "chalk": "^1.1.3",
+    "tap-out": "^1.4.2",
+    "through2": "^2.0.3"
   }
 }

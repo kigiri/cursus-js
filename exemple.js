@@ -272,10 +272,19 @@ if (colour === "red" || colour === "blue") {
 // && and || "short circuit", which is useful for setting default values.
 const name = otherName || "default"
 
+
+// The ternary operator allow for more compact and single expression if / else
+const result =  true ? 'yes' : 'no' // = 'yes'
+
+// For readabilty you can split long expression like so :
+const longResult =  count < 3
+  ? 'lower than 3'
+  : 'greater or equal to 3'
+
 // The `switch` statement checks for equality with `===`.
 // Use 'break' after each case
 // or the cases after the correct one will be executed too.
-grade = 'B'
+const grade = 'B'
 switch (grade) {
   case 'A':
     console.log("Great job")
