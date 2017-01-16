@@ -63,8 +63,18 @@ tap.on('output', res => {
       pushr(chalk.yellow(firstFailingTest))
       pushr(chalk.white(`  test #${failure.number}: `)
         + chalk.yellow(failure.name))
-      pushr(chalk.white('  expected: ') + chalk.green(failure.error.expected))
-      pushr(chalk.white('    actual: ') + chalk.red(failure.error.actual))
+      if (!failure.error.expected) {
+        pushr(chalk.white('   message: ') + chalk.green(failure.error.message))
+        pushr(chalk.white('      line: ') + chalk.cyan(failure.error.line))
+        pushr(chalk.white('    column: ') + chalk.cyan(failure.error.column))
+        pushr(chalk.white('   rule-id: ') + chalk.red(failure.error.ruleId))
+        pushr(chalk.white('            -> `')
+          + chalk.yellow('npm run rule '+ failure.error.ruleId)
+          + chalk.white('` to see more details.'))
+      } else {
+        pushr(chalk.white('  expected: ') + chalk.green(failure.error.expected))
+        pushr(chalk.white('    actual: ') + chalk.red(failure.error.actual))
+      }
     }
 
     statsOutput(res)
