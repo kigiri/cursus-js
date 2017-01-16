@@ -175,6 +175,7 @@ myObjB.myFourthKey // = undefined
 // if the function is only one expression, it will return automaticaly the
 // result of this expression
 const myFunctionA = (thing) => thing.toUpperCase()
+
 myFunctionA("foo") // = "FOO"
 
 // if a function is multiline you need to wrap it's content between `{}`
@@ -183,6 +184,7 @@ const myFunctionB = () => {
     thisIsAn: 'object literal',
   }
 }
+
 myFunctionB().thisIsAn // = 'object literal'
 
 // to return object literal directly you must wrap them in `()` so it's not
@@ -190,6 +192,7 @@ myFunctionB().thisIsAn // = 'object literal'
 const myFunctionC = () => ({
   thisIsStillAn: 'object literal',
 })
+
 myFunctionB().thisIsStillAn // = 'object literal'
 
 
@@ -200,36 +203,41 @@ const myFunctionC = () => {
   return // <- semicolon automatically inserted here
     { thisIsAn: 'object literal' }
 }
+
 myFunctionC() // = undefined
 
 // if your function takes more than one they are separated by a comma `, `
 const fromTo = (f, t) => `from ${f} to ${t} with love`
 
 // if you only have one argument, `()` parens are optionnal
-const myFunctionD = x => 15 + x
+const myFunctionD = (x=100) => 15 + x
 
-myFunctionD(10) === 30
+myFunctionD(10) // = 30
+myFunctionD() // = 115
+
 
 // JavaScript functions are first class objects, so they can be reassigned to
 // different variable names and passed to other functions as arguments - for
 // example, when supplying an event handler:
 const in5sec = () => {
-  // this code will be called in 5 seconds' time
+  constole.log('this code will be called in 5 seconds')
 }
+
 setTimeout(in5sec, 5000)
 // Note: setTimeout isn't part of the JS language, but is provided by browsers
 // and Node.js.
 
 // Another function provided by browsers is setInterval
 const every5sec = () => {
-  // this code will be called every 5 seconds
+  console.log('this code will be called every 5 seconds')
 }
+
 setInterval(every5sec, 5000)
 
 // Function objects don't even have to be declared with a name - you can write
 // an anonymous function definition directly into the arguments of another.
-setTimeout(() => {
-  // this code will be called in 5 seconds' time
+setTimeout(() =>
+  console.log('this code will be called in 5 seconds')
 }, 5000)
 
 // One of JavaScript's most powerful features is closures. If a function is
@@ -240,6 +248,7 @@ const sayHelloInFiveSeconds = name => {
   // Inner functions are put in the local scope by default, as if they were
   // declared with `var`.
   const inner = () => alert(prompt)
+
   setTimeout(inner, 5000)
   // setTimeout is asynchronous, so the sayHelloInFiveSeconds function will
   // exit immediately, and setTimeout will call inner afterwards. However,
@@ -253,6 +262,7 @@ sayHelloInFiveSeconds("Adam") // will open a popup with "Hello, Adam!" in 5s
 
 // The `if` structure works as you'd expect.
 const count = 1
+
 if (count === 3) {
   // evaluated if count is 3
 } else if (count === 4) {
@@ -285,6 +295,7 @@ const longResult =  count < 3
 // Use 'break' after each case
 // or the cases after the correct one will be executed too.
 const grade = 'B'
+
 switch (grade) {
   case 'A':
     console.log("Great job")
@@ -305,6 +316,7 @@ switch (grade) {
 // iterate over an array
 let index = -1
 const myArray = ['abcdefg', 'hijkl', 'mnop', 'qrst', 'uvw', 'xyz']
+
 while (++index < myArray.length) {
   const letters = myArray[index]
   // use index / letters here
@@ -313,10 +325,26 @@ while (++index < myArray.length) {
 // you can also iterate over strings in the same way :
 let index = -1
 const myString = 'abcdefg'
+
 while (++index < myString.length) {
   const character = myString[index]
   // use index / character here
 }
+
+// recursion is possible too
+// list can be any numerical index based list like arrays and strings
+const recursiveLoop = (list, index=0) => {
+  // if the index is out of bounds the rest of the code is never called
+  // because return always end the function
+  if (index > list.length) return
+
+  const elem = list[index]
+  // use element here
+
+  return recursiveLoop(list, index + 1)
+}
+
+recursiveLoop('exemple') // will apply
 
 ///////////////////////////////////
 // 5. More about Objects
@@ -325,6 +353,7 @@ while (++index < myString.length) {
 // equivalent wrapper objects.
 const myNumber = 12
 const myNumberObj = Number('12')
+
 myNumber === myNumberObj // = true
 
 // You can access a variable constructor like so :

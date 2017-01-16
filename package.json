@@ -1,11 +1,17 @@
 {
   "scripts": {
-    "test": "node test-runner.js | ./bin/dot.js"
+    "test": "node test-runner.js | ./bin/dot.js",
+    "rule": "./bin/md.js"
   },
   "dependencies": {
     "acorn": "^4.0.4",
     "blue-tape": "^1.0.0",
     "chalk": "^1.1.3",
+    "eslint": "^3.13.1",
+    "marked": "^0.3.6",
+    "marked-terminal": "^2.0.0",
+    "mz": "^2.6.0",
+    "node-fetch": "^2.0.0-alpha.1",
     "tap-out": "^1.4.2",
     "through2": "^2.0.3"
   }

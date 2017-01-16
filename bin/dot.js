@@ -1,116 +1,98 @@
 #!/usr/bin/env node
 
-var through = require('through2');
-var parser = require('tap-out');
-var chalk = require('chalk');
-var out = through();
-var tap = parser();
-var currentTestName = '';
-var errors = [];
-var extra = [];
-var assertCount = 0;
-var lastComment;
+const through = require('through2')
+const parser = require('tap-out')
+const chalk = require('chalk')
+const out = through()
+const tap = parser()
+const extra = []
+const asserts = []
 
-process.stdin.pipe(tap);
-
-out.push('\n');
-
-function outPush (str) {
-
-  out.push('  ' + str);
-};
-
-tap.on('comment', function (comment) {
-
-  lastComment = comment;
-});
-
-var firstTestDone = false;
-
-function pushTest(color) {
-  if (!firstTestDone) {
-    firstTestDone = true;
-    out.push('  ');
+const pusher = str => (n=1) => {
+  while (n-- > 0) {
+    out.push(str)
   }
-  out.push(chalk[color](color === 'red' ? 'x' : '.'));
 }
 
-function endLine() {
-  out.push('\n')
+const endLine = pusher('\n')
+const indent = pusher('  ')
+const push = (str, n) => {
+  indent(n)
+  out.push(str)
+}
+const pushr = (str, n) => {
+  push(str, n)
+  endLine()
 }
 
-tap.on('assert', function (res) {
+let firstTestDone = false
+const pushTest = color => {
+  if (!firstTestDone) {
+    firstTestDone = true
+    indent()
+  }
+  out.push(chalk[color](color === 'red' ? 'x' : '.'))
+}
 
-  pushTest(res.ok ? 'green' : 'red')
+const statsOutput = res => {
+  endLine(2)
+  pushr(res.tests.length +' tests')
+  pushr(chalk.green(res.pass.length +' passed'))
+}
 
-  assertCount +=1;
-});
+let currentTest = ''
+let firstFailingTest = ''
+tap.on('test', ({name}) => currentTest = name)
 
-tap.on('extra', function (str) {
+tap.on('assert', ({ok}) => {
+  if (!ok && !firstFailingTest) {
+    firstFailingTest = currentTest
+  }
+  pushTest(ok ? 'green' : 'red')
+  asserts.push(ok)
+})
 
-  if (str !== '') extra.push(str);
-});
+tap.on('extra', str => str && extra.push(str))
+tap.on('output', res => {
+  if (res.fail && res.fail.length || asserts.length === 0) {
+    endLine(2)
 
-tap.on('output', function (res) {
-
-  if (res.fail && res.fail.length || assertCount === 0) {
-    endLine();
-    endLine();
-
-    var failure = res.fail[0];
+    const failure = res.fail[0]
 
     if (failure) {
-      outPush(chalk.white(`test #${failure.number}: `));
-      out.push(chalk.cyan(failure.name));
-      endLine();
-      outPush(chalk.white('expected: '));
-      out.push(chalk.green(failure.error.expected));
-      endLine();
-      outPush(chalk.white('actual: '));
-      out.push(chalk.red(failure.error.actual));
-      endLine();
+      pushr(chalk.yellow(firstFailingTest))
+      pushr(chalk.white(`  test #${failure.number}: `)
+        + chalk.yellow(failure.name))
+      pushr(chalk.white('  expected: ') + chalk.green(failure.error.expected))
+      pushr(chalk.white('    actual: ') + chalk.red(failure.error.actual))
     }
 
-    errors = res.fail;
-    outputExtra();
+    statsOutput(res)
 
-    statsOutput();
+    if (extra.length) {
+      console.log(extra.join('\n'))
+    }
 
-    outPush(chalk.red(res.fail.length + ' failed'));
+    push(chalk.red(res.fail.length +' failed'))
 
-    var past = (res.fail.length == 1) ? 'was' : 'were';
-    var plural = (res.fail.length == 1) ? 'failure' : 'failures';
+    const past = (res.fail.length === 1) ? 'was' : 'were'
+    const plural = (res.fail.length === 1) ? 'failure' : 'failures'
 
-    endLine();
+    pushr(chalk.red('Failed Tests: ')
+      + 'There '+ past +' '+ chalk.red(res.fail.length) +' '+ plural)
+    endLine()
 
-    outPush(chalk.red('Failed Tests: '));
-    outPush('There ' + past + ' ' + chalk.red(res.fail.length) + ' ' + plural + '\n\n');
-
-    res.fail.forEach(function (error) {
-      outPush('  ' + chalk.red('x') + ' ' + error.name + '\n');
-    });
-    endLine();
+    res.fail.forEach(error => pushr(chalk.red('x') +' '+ error.name))
+    endLine()
+  } else {
+    statsOutput(res)
+    endLine()
+    pushr(chalk.green('Pass!'))
   }
-  else{
-    statsOutput();
+})
 
-    endLine();
-    outPush(chalk.green('Pass!'));
-    endLine();
-  }
+process.stdin.pipe(tap)
 
-  function statsOutput () {
-    endLine();
-    endLine();
+endLine()
 
-    outPush(res.tests.length + ' tests\n');
-    outPush(chalk.green(res.pass.length + ' passed\n'));
-  }
-});
-
-function outputExtra () {
-
-  console.log(extra.join('\n'));
-}
-
-out.pipe(process.stdout);
+out.pipe(process.stdout)
