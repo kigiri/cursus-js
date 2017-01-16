@@ -8,6 +8,8 @@
     "blue-tape": "^1.0.0",
     "chalk": "^1.1.3",
     "eslint": "^3.13.1",
+    "espree": "^3.3.2",
+    "lodash": "^4.17.4",
     "marked": "^0.3.6",
     "marked-terminal": "^2.0.0",
     "mz": "^2.6.0",
