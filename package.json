@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "test": "node test-runner.js | ./bin/dot.js",
+    "test": "./bin/bootstrap.js",
     "rule": "./bin/md.js"
   },
   "dependencies": {
