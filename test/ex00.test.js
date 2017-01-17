@@ -48,7 +48,11 @@ linter('ex00.js').then(ex00 => {
     process.exit(0)
   }
 
-  const genNum = n => n && ((Math.random() * n * 89.9) + (10 * n))
+  const genNum = (min, max) => n => n && ((Math.random() * n * max) + (min * n))
+  const genNum100 = genNum(10, 99)
+  const genNumMax = genNum(Number.MAX_SAFE_INTEGER + 1,
+    Number.MAX_SAFE_INTEGER * 10)
+
   const single = [ 1, 1, -1, -1, 0 ].map(n => [ genNum(n) ])
   const pairs = [
     [  1,  1 ],
@@ -66,20 +70,20 @@ linter('ex00.js').then(ex00 => {
 
   describe('ex00', [
     describe('cheating', [
-      test('original Math should not be used')
-        .value(ex00.$('#Math')).map('0').equal(),
-
-      test('toString should not be used')
-        .value(ex00.$('#toString').length).equal(0),
-
-      test('String should not be used')
-        .value(ex00.$('#String').length).equal(0),
-
-      test('Strings should not be used')
-        .value(ex00.$('String').length < 2).equal(true),
-    ].concat('~*%/'.split('').map(op => test(`${op} operator`)
-      .value(ex00.code.ast.tokens.filter(t => t.value === op).length)
-      .equal(0, `You can't use the operator ${op}, try harder`)))),
+        'Math',
+        'toString',
+        'String',
+        'parseInt',
+        'toFixed',
+      ].map(key => test(`${key} should not be used`)
+        .value(ex00.$(`#${key}`).length).equal(0))
+      .concat([
+        test('Strings should not be used')
+          .value(ex00.$('String').length < 2).equal(true),
+      ])
+      .concat('~ >> ^ << * % / & |'.split(' ').map(op => test(`${op} operator`)
+        .value(ex00.code.ast.tokens.filter(t => t.value === op).length)
+        .equal(0, `You can't use the operator ${op}, try something else`)))),
 
     testOp('add', '+', pairs),
     testOp('sub', '-', pairs),
@@ -98,6 +102,11 @@ linter('ex00.js').then(ex00 => {
     testOp('multiply', '*', flooredPairs),
     testOp('modulo', '%', flooredPairs, Math.trunc),
     testOp('divide', '/', flooredPairs, Math.trunc),
+
+
+    testAgainst('odd', (a, b) => a % 2 === 0, pairs),
+    testAgainst('even', (a, b) => a % 2 === 1, pairs),
+
 
     testFn('call', [
       test('call(add, 5, 2)')
