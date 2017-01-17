@@ -61,19 +61,21 @@ tap.on('output', res => {
 
     if (failure) {
       pushr(chalk.yellow(firstFailingTest))
-      pushr(chalk.white(`  test #${failure.number}: `)
-        + chalk.yellow(failure.name))
+      pushr(`  test #${failure.number}: `+ chalk.yellow(failure.name))
       if (!failure.error.expected) {
-        pushr(chalk.white('   message: ') + chalk.green(failure.error.message))
-        pushr(chalk.white('      line: ') + chalk.cyan(failure.error.line))
-        pushr(chalk.white('    column: ') + chalk.cyan(failure.error.column))
-        pushr(chalk.white('   rule-id: ') + chalk.red(failure.error.ruleId))
-        pushr(chalk.white('            -> `')
-          + chalk.yellow('npm run rule '+ failure.error.ruleId)
-          + chalk.white('` to see more details.'))
+        pushr('   message: ' + chalk.green(failure.error.message))
+        pushr('      line: ' + chalk.cyan(failure.error.line))
+        pushr('    column: ' + chalk.cyan(failure.error.column))
+        if (failure.name !== 'syntax-error') {
+          pushr('            -> run : `'
+            + chalk.yellow('npm run rule '+ failure.name)
+            + ('` to see more details'))
+          pushr('            -> or see : '
+            + chalk.yellow('http://eslint.org/docs/rules/'+ failure.name))
+        }
       } else {
-        pushr(chalk.white('  expected: ') + chalk.green(failure.error.expected))
-        pushr(chalk.white('    actual: ') + chalk.red(failure.error.actual))
+        pushr('  expected: ' + chalk.green(failure.error.expected))
+        pushr('    actual: ' + chalk.red(failure.error.actual))
       }
     }
 
@@ -92,7 +94,10 @@ tap.on('output', res => {
       + 'There '+ past +' '+ chalk.red(res.fail.length) +' '+ plural)
     endLine()
 
-    res.fail.forEach(error => pushr(chalk.red('x') +' '+ error.name))
+    const errors = {}
+    res.fail.forEach(err => errors[err.name] = (errors[err.name] || 0) + 1)
+
+    Object.keys(errors).forEach(e => pushr(chalk.red(errors[e]) +' '+ e))
     endLine()
   } else {
     statsOutput(res)

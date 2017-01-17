@@ -493,6 +493,19 @@ graceful-fs@^4.1.2:
   version "4.1.11"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.1.11.tgz#0e8bdfe4d1ddb8854d64e04ea7c00e2a026e5658"
 
+grasp-squery@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/grasp-squery/-/grasp-squery-0.3.1.tgz#a91639f5d44c6d6e4895e9c76fd7545df5b05e55"
+  dependencies:
+    grasp-syntax-javascript "~0.2.0"
+    prelude-ls "~1.1.2"
+
+grasp-syntax-javascript@~0.2.0:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/grasp-syntax-javascript/-/grasp-syntax-javascript-0.2.2.tgz#660ffd8ffb1eb108f77447594ac37e72b2b3504c"
+  dependencies:
+    prelude-ls "~1.1.2"
+
 has-ansi@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/has-ansi/-/has-ansi-2.0.0.tgz#34f5049ce1ecdf2b0649af3ef24e45ed35416d91"

@@ -1,159 +1,106 @@
 const fs = require('fs')
-const { find } = require('lodash')
 const linter = require('../lib/lint')
 const { describe, test } = require('../lib/mixtape')
 
+const showError = (err, idx) => `
+not ok ${idx} - ${err.ruleId}
+  ---
+  message: ${err.message}
+  line: ${err.line}
+  column: ${err.column}
+  ...`
+
+const showTap = errors => console.log(`
+TAP version 13
+1..${errors.length}
+${errors.map(showError).join('\n')}`)
+
 linter('ex00.js').then(ex00 => {
 
-  ex00.var = name => find(ex00.code.ast.body, n => n.type === 'VariableDeclaration'
-    && n.declarations[0].id.name === name).declarations[0]
+  const testFn = (name, tests) => 
+    describe(name, [
+      test('function is exported')
+        .value(ex00.exports[name])
+        .isA(Function)
+      ].concat(tests))
 
-  if (ex00.errors) {
-    //console.log(ex00.errors[0])
-    const error = ex00.errors[0]
-    console.log(`
-TAP version 13
-1..1
-not ok 1 - Moulinette ex00.js
-  ---
-  message: ${error.message}
-  line: ${error.line}
-  column: ${error.column}
-  ruleId: ${error.ruleId}
-  ...`)
+  const fun = n => ex00
+    .$(`(arrow.parent.id[name="${n}"], arrow.parent.key[name="${n}"])`)[0]
+
+  const pass = _ => _
+
+  const generateOpTests = (name, op, values, map=pass) => values.map(([ a, b ]) =>
+    test(`(${a} ${op} ${b})`)
+      .call(() => ex00.exports[name](a, b))
+      .equal(map(eval(`(${a} ${op} ${b})`))))
+
+  const testOp = (name, op, values, map) =>
+    testFn(name, generateOpTests(name, op, values, map))
+
+  const testAgainst = (name, fn, values) => testFn(name, values
+    .map(args => test(`${fn.name || ''}(${args.join(', ')})`)
+      .call(() => ex00.exports[name](...args))
+      .equal(fn(...args))))
+
+  const testMath = (name, values) => testAgainst(name, Math[name], values)
+
+  if (ex00.errors && ex00.errors.length) {
+    showTap(ex00.errors)
     process.exit(0)
   }
 
+  const genNum = n => n && ((Math.random() * n * 89.9) + (10 * n))
+  const single = [ 1, 1, -1, -1, 0 ].map(n => [ genNum(n) ])
+  const pairs = [
+    [  1,  1 ],
+    [  1, -1 ],
+    [ -1,  1 ],
+    [ -1, -1 ],
+    [  0,  0 ],
+    [  0,  1 ],
+    [  1,  0 ],
+    [ -1,  0 ],
+    [  0, -1 ],
+  ].map(n => n.map(genNum))
+
+  const flooredPairs = pairs.map(n => n.map(Math.floor))
+
   describe('ex00', [
-    describe('add', [
-      test('function is exported')
-        .value(ex00.exports.add)
-        .isA(Function)
-      ,
-      test('(5, 5)')
-        .call(() => ex00.exports.add(5, 5))
-        .equal(5 + 5)
-      ,
-      test('(5, -5)')
-        .call(() => ex00.exports.add(5, -5))
-        .equal(5 + -5)
-      ,
-    ]),
+    describe('cheating', [
+      test('original Math should not be used')
+        .value(ex00.$('#Math')).map('0').equal(),
 
-    describe('sub', [
-      test('function is exported')
-        .value(ex00.exports.sub)
-        .isA(Function)
-      ,
-      test('(5, 5)')
-        .call(() => ex00.exports.sub(5, 5))
-        .equal(5 - 5)
-      ,
-      test('(5, -5)')
-        .call(() => ex00.exports.sub(5, -5))
-        .equal(5 - -5)
-      ,
-    ]),
+      test('toString should not be used')
+        .value(ex00.$('#toString').length).equal(0),
 
-    describe('floor', []),
+      test('String should not be used')
+        .value(ex00.$('#String').length).equal(0),
 
-    describe('round', []),
+      test('Strings should not be used')
+        .value(ex00.$('String').length).equal(1),
+    ].concat('~*%/'.split('').map(op => test(`${op} operator`)
+      .value(ex00.code.ast.tokens.filter(t => t.value === op).length)
+      .equal(0, `You can't use the operator ${op}, try harder`)))),
 
-    describe('abs', []),
+    testOp('add', '+', pairs),
+    testOp('sub', '-', pairs),
 
-    describe('positive', [
-      test('function is exported')
-        .value(ex00.exports.positive)
-        .isA(Function)
-      ,
-      test('(5, -5)')
-        .call(() => ex00.exports.positive(5, -5))
-        .equal(false)
-      ,
-      test('(5, 5)')
-        .call(() => ex00.exports.positive(5, 5))
-        .equal(true)
-      ,
-      test('(-5, -5)')
-        .call(() => ex00.exports.positive(-5, -5))
-        .equal(true)
-      ,
-      test('(-5, 5)')
-        .call(() => ex00.exports.positive(-5, 5))
-        .equal(false)
-      ,
-    ]),
+    testMath('sign', single),
+    testMath('abs', single),
+    testMath('ceil', single),
+    testMath('floor', single),
+    testMath('max', pairs),
+    testMath('min', pairs),
+    testMath('round', single),
+    testMath('trunc', single),
 
-    describe('multiply', [
-      test('function is exported')
-        .value(ex00.exports.multiply)
-        .isA(Function)
-      ,
-      test('* operator')
-        .value(ex00.code.ast.tokens.filter(t => t.value === '*')[0])
-        .equal(undefined, 'You can\'t use the operator *, try harder')
-      ,
-      test('2 numbers (5 * 5)')
-        .call(() => ex00.exports.multiply(5, 5))
-        .equal(5 * 5)
-      ,
-      test('negative numbers (5 * -5)')
-        .call(() => ex00.exports.multiply(5, -5))
-        .equal(5 * -5)
-      ,
-      test('negative numbers (-5 * -5)')
-        .call(() => ex00.exports.multiply(-5, -5))
-        .equal(-5 * -5)
-      ,
-      test('negative numbers (-5 * 5)')
-        .call(() => ex00.exports.multiply(-5, 5))
-        .equal(-5 * 5)
-      ,
-    ]),
+    testAgainst('positive', (a, b) => a < 0 ? b < 0 : b > 0, pairs),
 
-    describe('divide', [
-      test('function is exported')
-        .value(ex00.exports.divide)
-        .isA(Function)
-      ,
-      test('/ operator')
-        .value(ex00.code.ast.tokens.filter(t => t.value === '/')[0])
-        .equal(undefined, 'You can\'t use the operator /, try harder')
-      ,
-      test('2 numbers (5 / 2)')
-        .call(() => ex00.exports.divide(5, 2))
-        .equal(Math.floor(5 / 2))
-      ,
-      test('2 numbers (100 / 22)')
-        .call(() => ex00.exports.divide(100, 22))
-        .equal(Math.floor(100 / 22))
-      ,
-    ]),
+    testOp('multiply', '*', flooredPairs),
+    testOp('modulo', '%', flooredPairs, Math.trunc),
+    testOp('divide', '/', flooredPairs, Math.trunc),
 
-    describe('modulo', [
-      test('function is exported')
-        .value(ex00.exports.modulo)
-        .isA(Function)
-      ,
-      test('% operator')
-        .value(ex00.code.ast.tokens.filter(t => t.value === '%')[0])
-        .equal(undefined, 'You can\'t use the operator %, try harder')
-      ,
-      test('2 numbers (5 % 2)')
-        .call(() => ex00.exports.modulo(5, 2))
-        .equal(Math.floor(5 % 2))
-      ,
-      test('2 numbers (100 % 22)')
-        .call(() => ex00.exports.modulo(100, 22))
-        .equal(Math.floor(100 % 22))
-      ,
-    ]),
-
-    describe('call', [
-      test('function is exported')
-        .value(ex00.exports.call)
-        .isA(Function)
-      ,
+    testFn('call', [
       test('call(add, 5, 2)')
         .call(() => ex00.exports.call(ex00.exports.add, 5, 2))
         .equal(5 + 2)
@@ -168,13 +115,9 @@ not ok 1 - Moulinette ex00.js
       ,
     ]),
 
-    describe('curry', [
-      test('function is exported')
-        .value(ex00.exports.curry)
-        .isA(Function)
-      ,
+    testFn('curry', [
       test('function should return a function')
-        .value(ex00.exports.curry && ex00.exports.curry())
+        .call(ex00.exports.curry)
         .isA(Function)
       ,
       test('curry(add, 5) -> then with 2')
@@ -192,23 +135,25 @@ not ok 1 - Moulinette ex00.js
     ]),
 
     describe('BONUS', [
-      test('add is a single expression')
-        .value(ex00.var('add'))
-        .notEqual('BlockStatement').map('type')
-      ,
-      test('sub is a single expression')
-        .value(ex00.exports.sub)
-        .exclude('{')
-      ,
-      test('call is a single expression')
-        .value(ex00.exports.call)
-        .exclude('{')
-      ,
-      test('apply is a single expression')
-        .value(ex00.exports.apply)
-        .exclude('{')
-      ,
-    ]),
-
+      test('while is not used')
+        .value(ex00.$('WhileStatement').length)
+        .equal(0),
+    ].concat(ex00.$('arrow').map(def =>
+      test(`function line ${def.loc.start.line} column ${
+        def.loc.start.column} is a single expression`)
+        .value(def.body.type)
+        .notEqual('BlockStatement')))),
   ])()
+}).catch(err => {
+  err.ruleId = 'syntax-error'
+  if (err.column !== undefined) {
+    err.line = err.lineNumber
+  } else {
+    const stack = err.stack.split('\n').filter(r => /exercise\/ex/.test(r))
+    if (!stack.length) return console.error(err)
+    const [ , c, l ] = stack[stack.length - 1].split('.js')[1].split(':')
+    err.column = c
+    err.line = l.slice(0, -1)
+  }
+  showTap([ err ])
 })
