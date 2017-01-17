@@ -8,7 +8,7 @@ git clone https://github.com/kigiri/cursus-js.git
 ```
 
 #### start it:
-you can directly write :
+you can directly run :
 ```shell
 cursus-js/bin/bootstrap.js
 ```
@@ -18,3 +18,5 @@ or use npm test / yarn test if you are in the folder
 cd cursus-js
 npm test
 ```
+
+you can start editing `exercies/ex00.js` to make those tests green now :)
