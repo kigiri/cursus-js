@@ -16,7 +16,6 @@ TAP version 13
 ${errors.map(showError).join('\n')}`)
 
 linter('ex00.js').then(ex00 => {
-
   const testFn = (name, tests) => 
     describe(name, [
       test('function is exported')
@@ -39,7 +38,7 @@ linter('ex00.js').then(ex00 => {
 
   const testAgainst = (name, fn, values) => testFn(name, values
     .map(args => test(`${fn.name || ''}(${args.join(', ')})`)
-      .call(() => ex00.exports[name](...args))
+      .call(() => ex00.exports[name](...args)) 
       .equal(fn(...args))))
 
   const testMath = (name, values) => testAgainst(name, Math[name], values)
@@ -77,7 +76,7 @@ linter('ex00.js').then(ex00 => {
         .value(ex00.$('#String').length).equal(0),
 
       test('Strings should not be used')
-        .value(ex00.$('String').length).equal(1),
+        .value(ex00.$('String').length < 2).equal(true),
     ].concat('~*%/'.split('').map(op => test(`${op} operator`)
       .value(ex00.code.ast.tokens.filter(t => t.value === op).length)
       .equal(0, `You can't use the operator ${op}, try harder`)))),
