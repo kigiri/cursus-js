@@ -4,7 +4,7 @@ a bunch of test to learn javascript by doing
 ## Setup :
 #### clone it:
 ```shell
-git clone https://github.com/kigiri/cursus-js.git
+git clone --recursive https://github.com/kigiri/cursus-js.git
 ```
 
 #### start it:
