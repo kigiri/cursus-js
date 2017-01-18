@@ -1,5 +1,6 @@
 const tester = require('../lib/tester')
 const stringify = require('../lib/log-value')
+const wesh = _ => (console.error(_), _)
 
 tester(__filename, ex => {
   const { describe, test, code, exports } = ex
@@ -67,11 +68,16 @@ tester(__filename, ex => {
     describe('obj', [
       testDefined('obj'),
       testType('obj', Object),
-      test('should have 4 elements')
+      test('should have 6 elements')
         .value(exports.obj)
         .map(Object.keys)
         .map('length')
-        .equal(5)
+        .equal(6)
+      ,
+      test(`obj['spaced key'] should equal true`)
+        .value(exports.obj)
+        .map('spaced key')
+        .equal(true)
       ,
     ].concat([ 'str', 'num', 'arr' ].map(key =>
       test(`obj.${key} should equal module.exports.${key}`)
@@ -83,10 +89,6 @@ tester(__filename, ex => {
         .value(exports.obj)
         .map('obj')
         .equal(exports.obj)
-      ,
-      test('exports.obj should be equal exports')
-        .value(exports.obj)
-        .equal(exports)
       ,
     ])),
   ]
