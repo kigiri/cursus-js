@@ -52,6 +52,11 @@ tap.on('assert', ({ok}) => {
   asserts.push(ok)
 })
 
+const operators = {
+  deepEqual: 'equal',
+}
+const replaceOp = op => operators[op] || op
+
 tap.on('extra', str => str && extra.push(str))
 tap.on('output', res => {
   if (res.fail && res.fail.length || asserts.length === 0) {
@@ -76,7 +81,7 @@ tap.on('output', res => {
       } else {
         pushr('  failed where value:')
         pushr('    '+ chalk.red(failure.error.actual))
-        pushr('  should '+ chalk.cyan(failure.error.operator) +':')
+        pushr('  should '+ chalk.cyan(replaceOp(failure.error.operator)) +':')
         pushr('    '+ chalk.green(failure.error.expected))
       }
     }

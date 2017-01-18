@@ -61,7 +61,8 @@ tester(__filename, ex => {
         .equal(1)
       ,
     ].concat([ 'str', 'num', 'arr', 'fn', 'undefined' ].map(key =>
-      test(`fn('${key}') should return module.exports.${key}`)
+      test(`calling function fn with argument '${key
+        }' should return ${stringify(exports[key])}`)
         .value(exports.fn)
         .map(fn => fn(key))
         .deepEqual(exports[key])))),
