@@ -1,6 +1,6 @@
 const tester = require('../lib/tester')
 
-tester(1, ex => {
+tester(__filename, ex => {
   const pass = _ => _
 
   const generateOpTests = (name, op, values, map=pass) => values.map(([ a, b ]) =>
