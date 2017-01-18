@@ -95,7 +95,10 @@ tap.on('output', res => {
     endLine()
 
     const errors = {}
-    res.fail.forEach(err => errors[err.name] = (errors[err.name] || 0) + 1)
+    res.fail.forEach(fail => {
+      const type = failure.error.expected ? fail.type : fail.name
+      errors[type] = (errors[type] || 0) + 1
+    })
 
     Object.keys(errors).forEach(e => pushr(chalk.red(errors[e]) +' '+ e))
     endLine()
