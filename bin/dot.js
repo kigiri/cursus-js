@@ -66,7 +66,7 @@ tap.on('output', res => {
         pushr('   message: ' + chalk.green(failure.error.message))
         pushr('      line: ' + chalk.cyan(failure.error.line))
         pushr('    column: ' + chalk.cyan(failure.error.column))
-        if (failure.name !== 'syntax-error') {
+        if (failure.name !== 'loading-error') {
           pushr('            -> run : `'
             + chalk.yellow('npm run rule '+ failure.name)
             + ('` to see more details'))
@@ -74,8 +74,10 @@ tap.on('output', res => {
             + chalk.yellow('http://eslint.org/docs/rules/'+ failure.name))
         }
       } else {
-        pushr('  expected: ' + chalk.green(failure.error.expected))
-        pushr('    actual: ' + chalk.red(failure.error.actual))
+        pushr('  failed where value:')
+        pushr('    '+ chalk.red(failure.error.actual))
+        pushr('  should '+ chalk.cyan(failure.error.operator) +':')
+        pushr('    '+ chalk.green(failure.error.expected))
       }
     }
 
