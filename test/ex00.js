@@ -26,6 +26,7 @@ tester(__filename, ex => {
   return [
     describe('str', testProp('str', String, '42')),
     describe('num', testProp('num', Number, 42)),
+    describe('bool', testProp('bool', Boolean, false)),
     describe('escapeStr', [
       testDefined('escapeStr'),
       testType('escapeStr', String),
@@ -60,7 +61,7 @@ tester(__filename, ex => {
         .map('length')
         .equal(1)
       ,
-    ].concat([ 'str', 'num', 'arr', 'fn', 'undefined' ].map(key =>
+    ].concat([ 'str', 'bool', 'num', 'arr', 'fn', 'undefined' ].map(key =>
       test(`calling function fn with argument '${key
         }' should return ${stringify(exports[key])}`)
         .value(exports.fn)
@@ -73,7 +74,7 @@ tester(__filename, ex => {
         .value(exports.obj)
         .map(Object.keys)
         .map('length')
-        .equal(6)
+        .equal(7)
       ,
       test(`obj['spaced key'] should equal true`)
         .value(exports.obj)
