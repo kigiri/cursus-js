@@ -93,5 +93,7 @@ tester(__filename, ex => {
         .equal(exports.obj)
       ,
     ])),
+    describe('BONUS', [
+    ])
   ]
 })
