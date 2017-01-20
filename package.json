@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "test": "./bin/bootstrap.js",
-    "rule": "./bin/md.js"
+    "test": "node ./bin/bootstrap.js",
+    "rule": "node ./bin/md.js"
   },
   "dependencies": {
     "acorn": "^4.0.4",
