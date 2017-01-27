@@ -8,7 +8,7 @@ const restrictedProps = [2].concat([
   '.__lookupSetter__',
   '.valueOf',
 ].map((propPath) => {
-  const [object, property, message] = propPath.split('.')
+  const [ object, property, message ] = propPath.split('.')
 
   return { object, property, message }
 }))
@@ -381,7 +381,7 @@ module.exports = {
       // enforce consistent spacing before and after commas
     'comma-style': [ 'error', 'last' ],
       // enforce consistent comma style
-    'computed-property-spacing': [ 'error', 'never'],
+    'computed-property-spacing': [ 'error', 'never' ],
       // enforce consistent spacing inside computed property brackets
     //'consistent-this': 'error',
       // enforce consistent naming when capturing the current execution context
@@ -399,7 +399,10 @@ module.exports = {
       // disallow specified identifiers
     //'id-length': 'error',
       // enforce minimum and maximum identifier lengths
-    'id-match': [ 'error', "^(_?[a-z]+([A-Z]+[a-z]*)*_?|Infinity|NaN|_)$" ],
+    //'id-match': [
+    //  'error',
+    //  '^((_|[a-z])+([A-Z0-9]+[a-z0-9]*)*_?|Infinity|NaN|_)$',
+    //],
       // require identifiers to match a specified regular expression
     'indent': [ 'error', 2 ],
       // enforce consistent indentation

@@ -3,8 +3,8 @@ const tester = require('../lib/tester')
 tester(__filename, ex => {
   const pass = _ => _
 
-  const generateOpTests = (name, op, values, map=pass) => values.map(([ a, b ]) =>
-    ex.test(`(${a} ${op} ${b})`)
+  const generateOpTests = (name, op, values, map=pass) =>
+    values.map(([ a, b ]) => ex.test(`(${a} ${op} ${b})`)
       .call(() => ex.exports[name](a, b))
       .equal(map(eval(`(${a} ${op} ${b})`))))
 
@@ -63,18 +63,21 @@ tester(__filename, ex => {
 
     testMath('sign', single),
     testMath('abs', single),
-    testMath('ceil', single),
-    testMath('floor', single),
+
     testMath('max', pairs),
     testMath('min', pairs),
-    testMath('round', single),
-    testMath('trunc', single),
 
-    ex.test.against('positive', (a, b) => a < 0 ? b < 0 : b > 0, pairs),
+    ex.test.against('positive', (a, b) => a < 0 ? b < 0 : b > 0, pairs
+      .filter(([a, b]) => a !== 0 && b !== 0)),
 
     testOp('multiply', '*', flooredPairs),
     testOp('modulo', '%', flooredPairs, Math.trunc),
     testOp('divide', '/', flooredPairs, Math.trunc),
+
+    testMath('ceil', single),
+    testMath('floor', single),
+    testMath('round', single),
+    testMath('trunc', single),
 
     ex.test.against('odd', isOdd, flooredSingle),
     ex.test.against('even', n => !isOdd(n), flooredSingle),
@@ -82,43 +85,6 @@ tester(__filename, ex => {
     ex.test.against('clamp', (n, max) => n < max ? n : max, pairs),
     ex.test.against('rotate', (n, max) => n % max, flooredPairs
       .filter(([ a, b ]) => a > 0 && b > 0)),
-/*
-    ex.test.against('base2', n => Number(n.toString(2)), flooredSingle),
-    ex.test.against('base8', n => Number(n.toString(8)), flooredSingle),
-*/
-    ex.test.fn('call', [
-      ex.test('call(add, 5, 2)')
-        .call(() => ex.exports.call(ex.exports.add, 5, 2))
-        .equal(5 + 2)
-      ,
-      ex.test('call(sub, 5) -> then with 2')
-        .call(() => ex.exports.call(ex.exports.sub, 5, 2))
-        .equal(5 - 2)
-      ,
-      ex.test('call((a, b) => (a++) * 2 + b, 5, 2)')
-        .call(() => ex.exports.call((a, b) => (a++) * 2 + b, 5, 2))
-        .equal(((a, b) => (a++) * 2 + b)(5, 2))
-      ,
-    ]),
-
-    ex.test.fn('curry', [
-      ex.test('function should return a function')
-        .call(ex.exports.curry)
-        .isA(Function)
-      ,
-      ex.test('curry(add, 5) -> then with 2')
-        .call(() => ex.exports.curry(ex.exports.add, 5)(2))
-        .equal(5 + 2)
-      ,
-      ex.test('curry(sub, 5) -> then with 2')
-        .call(() => ex.exports.curry(ex.exports.sub, 5)(2))
-        .equal(5 - 2)
-      ,
-      ex.test('curry((a, b) => (a++) * 2 + b, 5) -> then with 2')
-        .call(() => ex.exports.curry((a, b) => (a++) * 2 + b, 5)(2))
-        .equal(((a, b) => (a++) * 2 + b)(5, 2))
-      ,
-    ]),
 
     ex.describe('BONUS', [
       ex.test('while is not used')

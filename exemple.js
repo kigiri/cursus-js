@@ -1,6 +1,16 @@
-// Single-line comments start with two slashes.
-/* Multiline comments start with slash-star,
-   and end with star-slash */
+'use strict'
+
+// first line of the file must be 'use strict' to ensure we use javascript
+// in strict mode
+
+// the previous line start with two slashes so it's a comment.
+// Comments allow you to annotate your code with text that will be ignored
+// by javascript, it's for keep notes and help too clarify code
+
+/* To avoid adding // before each lines
+  Multiline comments start with slash-star,
+  and end with star-slash
+*/
 
 // Statements can be terminated by ;
 doStuff();
@@ -8,6 +18,7 @@ doStuff();
 // ... but they don't have to be, as semicolons are automatically inserted
 // wherever there's a newline, except in certain cases.
 doStuff()
+
 
 ///////////////////////////////////
 // 1. Numbers, Strings and Operators
@@ -50,8 +61,8 @@ true
 false
 
 // Strings are created with ' or ".
-'abc'
-"Hello, world"
+'abc' // The norm ask for single quotes '
+"I'm such a nice boy" // but you may use " if your string contains '
 
 // Negation uses the ! symbol
 !true // = false
@@ -72,39 +83,43 @@ false
 2 >= 2 // = true
 
 // Strings are concatenated with +
-"Hello " + "world!" // = "Hello world!"
+'Hello ' + 'world!' // = 'Hello world!'
 
 // ... which works with more than just strings
-"1, 2, " + 3 // = "1, 2, 3"
-"Hello " + ["world", "!"] // = "Hello world,!"
+'1, 2, ' + 3 // = '1, 2, 3'
+'Hello ' + ['world', '!'] // = 'Hello world,!' So be carefull with + operator
 
 // and are compared with < and >
-"a" < "b" // = true
+'a' < 'b' // = true
 
 // Type coercion is performed for comparisons with double equals...
-"5" == 5 // = true
+'5' == 5 // = true
 null == undefined // = true
 
 // ...avoid loosing your hairs and you use the strict === instead... please...
-"5" === 5 // = false
+'5' === 5 // = false
 null === undefined // = false
 
-// You can access characters in a string with `charAt`
-"This is a string".charAt(0)  // = 'T'
+// You can access characters in a string with [index]
+'This is a string'[0]  // = 'T'
 
-// ...or use `substring` to get larger pieces.
-"Hello world".substring(0, 5) // = "Hello"
+// ...or use `slice` to get larger pieces.
+'Hello world'.slice(0, 5) // = 'Hello'
 
-// `length` is a property, so don't use ().
-"Hello".length // = 5
+// `length` is a property that return the lenght of a string or array
+'Hello'.length // = 5
 
 // There's also `null` and `undefined`.
 null      // used to indicate a deliberate non-value
 undefined // used to indicate a value is not currently present (although
           // `undefined` is actually a value itself)
 
-// false, null, undefined, NaN, 0 and "" are falsy everything else is truthy.
-// Note that 0 is falsy and "0" is truthy, even though 0 === "0".
+// We recommand to avoid using null as it can always be substitute by undefined
+
+// false, null, undefined, NaN, 0 and '' are falsy everything else is truthy.
+// Note that 0 is falsy and "0" is truthy.
+// empty string are falsy but empty array [] and empty object {} are truthy
+
 
 ///////////////////////////////////
 // 2. Variables, Arrays and Objects
@@ -117,56 +132,60 @@ let someVar = 5
 // Variables declared without being assigned to are set to undefined.
 let someThirdVar // = undefined
 
-// If you want to declare a couple of variables, then you could use a comma
-// separator
-let
-  someFourthVar = 2,
-  someFifthVar = 4
-
 // There's shorthand for performing math operations on variables:
 someVar += 5 // equivalent to someVar = someVar + 5 someVar is 10 now
 someVar *= 10 // now someVar is 100
 
 // and an even-shorter-hand for adding or subtracting 1
-someVar++ // now someVar is 101
+const prevValue = someVar++ // prevValue is 100
+// and now someVar is 101
+
 someVar-- // back to 100
+
+// or you can use pre-incrementation
+const nowValue = ++someVar // in this case someVar and nowValue are 101
 
 // Arrays are ordered lists of values, of any type.
 // `const` is used for a constant variable, you can however change the content
 // of an array but not reassign the reference to a new array.
 // prefer to use `const` when ever possible, use let only when necessary.
-const myArray = ["Hello", 45, true]
+const myArray = ['Hello', 45, true]
 
 // Their members can be accessed using the square-brackets subscript syntax.
 // Array indices start at zero.
 myArray[1] // = 45
 
 // Arrays are mutable and of variable length.
-myArray.push("World")
+myArray.push('World')
 myArray.length // = 4
 
 // Add/Modify at specific index
-myArray[3] = "Hello"
+myArray[3] = 'Hello'
 
-// JavaScript's objects are equivalent to "dictionaries" or "maps" in other
+// JavaScript's objects are equivalent to 'dictionaries' or 'maps' in other
 // languages: an unordered collection of key-value pairs.
-const myObjA = { key1: "Hello", key2: "World" }
+const myObjA = { key1: 'Hello', key2: 'World' }
 
 // Keys are strings, but quotes aren't required if they're a valid
 // JavaScript identifier. Values can be any type.
-const myObjB = { myKey: "myValue", "my other key": 4 }
+const myObjB = { myKey: 'myValue', 'my other key': 'my other value' }
 
-// Object attributes can also be accessed using the subscript syntax,
-myObjB["my other key"] // = 4
+// Object attributes can also be accessed using the subscript syntax
+myObjB['my other key'] // = 'my other value'
 
 // ... or using the dot syntax, provided the key is a valid identifier.
-myObjB.myKey // = "myValue"
+myObjB.myKey // = 'myValue'
+
+// You can use variables to access an object
+const myKey = 'my other key'
+myObjB[myKey] // = 'my other value'
 
 // Objects are mutable values can be changed and new keys added.
 myObjB.myThirdKey = true
 
 // If you try to access a value that's not yet set, you'll get undefined.
 myObjB.myFourthKey // = undefined
+
 
 ///////////////////////////////////
 // 3. Functions, Scope and Closures
@@ -176,7 +195,7 @@ myObjB.myFourthKey // = undefined
 // result of this expression
 const myFunctionA = (thing) => thing.toUpperCase()
 
-myFunctionA("foo") // = "FOO"
+myFunctionA('foo') // = 'FOO'
 
 // if a function is multiline you need to wrap it's content between `{}`
 const myFunctionB = () => {
@@ -210,11 +229,13 @@ myFunctionC() // = undefined
 const fromTo = (f, t) => `from ${f} to ${t} with love`
 
 // if you only have one argument, `()` parens are optionnal
-const myFunctionD = (x=100) => 15 + x
+const add10 = x => x + 10
+
+// you can specify default parameters like so
+const myFunctionD = (x = 100) => 15 + x
 
 myFunctionD(10) // = 30
 myFunctionD() // = 115
-
 
 // JavaScript functions are first class objects, so they can be reassigned to
 // different variable names and passed to other functions as arguments - for
@@ -244,7 +265,7 @@ setTimeout(() =>
 // defined inside another function, the inner function has access to all the
 // outer function's variables, even after the outer function exits.
 const sayHelloInFiveSeconds = name => {
-  const prompt = "Hello, " + name + "!"
+  const prompt = 'Hello, ' + name + '!'
   // Inner functions are put in the local scope by default, as if they were
   // declared with `var`.
   const inner = () => alert(prompt)
@@ -252,10 +273,10 @@ const sayHelloInFiveSeconds = name => {
   setTimeout(inner, 5000)
   // setTimeout is asynchronous, so the sayHelloInFiveSeconds function will
   // exit immediately, and setTimeout will call inner afterwards. However,
-  // because inner is "closed over" sayHelloInFiveSeconds, inner still has
+  // because inner is 'closed over' sayHelloInFiveSeconds, inner still has
   // access to the `prompt` variable when it is finally called.
 }
-sayHelloInFiveSeconds("Adam") // will open a popup with "Hello, Adam!" in 5s
+sayHelloInFiveSeconds('Adam') // will open a popup with 'Hello, Adam!' in 5s
 
 ///////////////////////////////////
 // 4. Logic and Control Structures
@@ -272,16 +293,15 @@ if (count === 3) {
 }
 
 // && is logical and, || is logical or
-if (house.size === "big" && house.colour === "blue") {
-  house.contains = "bear"
+if (house.size === 'big' && house.colour === 'blue') {
+  house.contains = 'bear'
 }
-if (colour === "red" || colour === "blue") {
+if (colour === 'red' || colour === 'blue') {
   // colour is either red or blue
 }
 
-// && and || "short circuit", which is useful for setting default values.
-const name = otherName || "default"
-
+// && and || 'short circuit', which is useful for setting default values.
+const name = otherName || 'default'
 
 // The ternary operator allow for more compact and single expression if / else
 const result =  true ? 'yes' : 'no' // = 'yes'
@@ -298,16 +318,16 @@ const grade = 'B'
 
 switch (grade) {
   case 'A':
-    console.log("Great job")
+    console.log('Great job')
     break
   case 'B':
-    console.log("OK job")
+    console.log('OK job')
     break
   case 'C':
-    console.log("You can do better")
+    console.log('You can do better')
     break
   default:
-    console.log("Oy vey")
+    console.log('Oy vey')
     break
 }
 
@@ -344,7 +364,8 @@ const recursiveLoop = (list, index=0) => {
   return recursiveLoop(list, index + 1)
 }
 
-recursiveLoop('exemple') // will apply
+recursiveLoop('exemple') // will start the loop
+
 
 ///////////////////////////////////
 // 5. More about Objects
@@ -363,22 +384,23 @@ myNumber.constructor === Number
 // in switch statements :
 const getType = value => {
   switch (myNumber.constructor) {
-    case Function: return 'function',
-    case Number: return 'number',
-    case String: return 'string',
-    case Array: return 'array',
+    case Function: return 'function'
+    case Number: return 'number'
+    case String: return 'string'
+    case Array: return 'array'
     case Object: // empty case will continue to the next
-    case null: return 'object', // object can have no constructors
+    case null: return 'object' // object can have no constructors
   }
 }
 
 getType(myNumber) === 'number'
 getType('number') === 'string'
 
-
 // declare functions
 const isTrue = bool => {
-  if (bool !== true) { throw Error("it's not true !!!") }
+  if (bool !== true) {
+    throw Error("it's not true !!!")
+  }
 }
 const sayHello = name => `Hello, my name is ${name}`
 
@@ -395,7 +417,14 @@ isTrue(exempleHuman.greet() === 'Hello, my name is Stehpano')
 exempleHuman.name = 'Bertrand'
 isTrue(exempleHuman.greet() === 'Hello, my name is Bertrand')
 
-// export stuff in node
+// exports
 module.exports.exempleHuman = exempleHuman
 module.exports.sayHello = sayHello
+// exports is an object that allow you to expose some value to the outside
+// of a module in node.
+// This allow you to split your code in multiple files.
+// We do that to avoid getting lost in huge files and easly
+// reuse the same code in multiple place
 
+
+// a good practice is to always exports at the end
