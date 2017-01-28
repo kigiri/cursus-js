@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+'use strict'
 
 const through = require('through2')
 const parser = require('tap-out')
@@ -8,7 +9,7 @@ const tap = parser()
 const extra = []
 const asserts = []
 
-const pusher = str => (n=1) => {
+const pusher = str => (n = 1) => {
   while (n-- > 0) {
     out.push(str)
   }
@@ -36,15 +37,16 @@ const pushTest = color => {
 
 const statsOutput = res => {
   endLine(2)
-  pushr(res.tests.length +' tests')
-  pushr(chalk.green(res.pass.length +' passed'))
+  pushr(res.tests.length + ' tests')
+  pushr(chalk.green(res.pass.length + ' passed'))
 }
 
 let currentTest = ''
 let firstFailingTest = ''
-tap.on('test', ({name}) => currentTest = name)
 
-tap.on('assert', ({ok}) => {
+tap.on('test', ({ name }) => currentTest = name)
+
+tap.on('assert', ({ ok }) => {
   if (!ok && !firstFailingTest) {
     firstFailingTest = currentTest
   }
@@ -52,62 +54,66 @@ tap.on('assert', ({ok}) => {
   asserts.push(ok)
 })
 
-const operators = {
-  deepEqual: 'equal',
-}
+const operators = { deepEqual: 'equal' }
 const replaceOp = op => operators[op] || op
+
+const handleFailure = failure => {
+  if (!failure) {
+    return
+  }
+
+  pushr(chalk.yellow(firstFailingTest))
+  pushr(`  test #${failure.number}: ` + chalk.yellow(failure.name))
+  if (failure.error.expected) {
+    pushr('  failed where value:')
+    pushr('    ' + chalk.red(failure.error.actual))
+    pushr('  should ' + chalk.cyan(replaceOp(failure.error.operator)) + ':')
+    pushr('    ' + chalk.green(failure.error.expected))
+
+    return
+  }
+  pushr('   message: ' + chalk.green(failure.error.message))
+  pushr('      line: ' + chalk.cyan(failure.error.line))
+  pushr('    column: ' + chalk.cyan(failure.error.column))
+  if (failure.name !== 'loading-error') {
+    pushr('            -> run : `'
+      + chalk.yellow('npm run rule ' + failure.name)
+      + ('` to see more details'))
+    pushr('            -> or see : '
+      + chalk.yellow('http://eslint.org/docs/rules/' + failure.name))
+  }
+}
 
 tap.on('extra', str => str && extra.push(str))
 tap.on('output', res => {
-  if (res.fail && res.fail.length || asserts.length === 0) {
+  if ((res.fail && res.fail.length) || asserts.length === 0) {
     endLine(2)
 
-    const failure = res.fail[0]
-
-    if (failure) {
-      pushr(chalk.yellow(firstFailingTest))
-      pushr(`  test #${failure.number}: `+ chalk.yellow(failure.name))
-      if (!failure.error.expected) {
-        pushr('   message: ' + chalk.green(failure.error.message))
-        pushr('      line: ' + chalk.cyan(failure.error.line))
-        pushr('    column: ' + chalk.cyan(failure.error.column))
-        if (failure.name !== 'loading-error') {
-          pushr('            -> run : `'
-            + chalk.yellow('npm run rule '+ failure.name)
-            + ('` to see more details'))
-          pushr('            -> or see : '
-            + chalk.yellow('http://eslint.org/docs/rules/'+ failure.name))
-        }
-      } else {
-        pushr('  failed where value:')
-        pushr('    '+ chalk.red(failure.error.actual))
-        pushr('  should '+ chalk.cyan(replaceOp(failure.error.operator)) +':')
-        pushr('    '+ chalk.green(failure.error.expected))
-      }
-    }
-
+    handleFailure(res.fail[0])
     statsOutput(res)
 
     if (extra.length) {
       console.log(extra.join('\n'))
     }
 
-    push(chalk.red(res.fail.length +' failed'))
+    push(chalk.red(res.fail.length + ' failed'))
 
     const past = (res.fail.length === 1) ? 'was' : 'were'
     const plural = (res.fail.length === 1) ? 'failure' : 'failures'
 
     pushr(chalk.red('Failed Tests: ')
-      + 'There '+ past +' '+ chalk.red(res.fail.length) +' '+ plural)
+      + 'There ' + past + ' ' + chalk.red(res.fail.length) + ' ' + plural)
     endLine()
 
     const errors = {}
+
     res.fail.forEach(fail => {
-      const type = failure.error.expected ? fail.type : fail.name
+      const type = res.fail[0].error.expected ? fail.type : fail.name
+
       errors[type] = (errors[type] || 0) + 1
     })
 
-    Object.keys(errors).forEach(e => pushr(chalk.red(errors[e]) +' '+ e))
+    Object.keys(errors).forEach(e => pushr(chalk.red(errors[e]) + ' ' + e))
     endLine()
   } else {
     statsOutput(res)

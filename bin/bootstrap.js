@@ -1,5 +1,7 @@
 #!/usr/bin/env node
+'use strict'
 
+/* eslint no-var: 0 */
 var version = process.version.slice(1).split('.').map(Number)
 var major = version[0]
 var minor = version[1]
