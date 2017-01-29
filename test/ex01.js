@@ -1,17 +1,17 @@
 const tester = require('../lib/tester')
 
-tester(__filename, ex => {
+tester(__filename, ({ test, describe, exports, code, $ }) => {
   const pass = _ => _
 
   const generateOpTests = (name, op, values, map=pass) =>
-    values.map(([ a, b ]) => ex.test(`(${a} ${op} ${b})`)
-      .call(() => ex.exports[name](a, b))
+    values.map(([ a, b ]) => test(`(${a} ${op} ${b})`)
+      .call(() => exports[name](a, b))
       .equal(map(eval(`(${a} ${op} ${b})`))))
 
   const testOp = (name, op, values, map) =>
-    ex.test.fn(name, generateOpTests(name, op, values, map))
+    test.fn(name, generateOpTests(name, op, values, map))
 
-  const testMath = (name, values) => ex.test.against(name, Math[name], values)
+  const testMath = (name, values) => test.against(name, Math[name], values)
   const genNum = (min, max) => n => n && ((Math.random() * n * max) + (min * n))
 
   const basePairs = [
@@ -39,7 +39,7 @@ tester(__filename, ex => {
   const isOdd = n => odds.indexOf(n.toString()[n.toString().length - 1]) !== -1
 
   return [
-    ex.describe('cheating', [
+    describe('cheating', [
         'require',
         'Math',
         'toString',
@@ -47,15 +47,15 @@ tester(__filename, ex => {
         'Number',
         'parseInt',
         'toFixed',
-      ].map(key => ex.test(`${key} should not be used`)
-        .value(ex.$(`#${key}`).length).equal(0))
+      ].map(key => test(`${key} should not be used`)
+        .value($(`#${key}`).length).equal(0))
       .concat([
-        ex.test('Strings should not be used')
-          .value(ex.$('String').length < 2).equal(true),
+        test('Strings should not be used')
+          .value($('String').length < 2).equal(true),
       ])
       .concat('~ >> ^ << * % / & |'.split(' ')
-        .map(op => ex.test(`${op} operator`)
-          .value(ex.code.ast.tokens.filter(t => t.value === op).length)
+        .map(op => test(`${op} operator`)
+          .value(code.ast.tokens.filter(t => t.value === op).length)
           .equal(0, `You can't use the operator ${op}, try something else`)))),
 
     testOp('add', '+', pairs),
@@ -67,7 +67,7 @@ tester(__filename, ex => {
     testMath('max', pairs),
     testMath('min', pairs),
 
-    ex.test.against('positive', (a, b) => a < 0 ? b < 0 : b > 0, pairs
+    test.against('positive', (a, b) => a < 0 ? b < 0 : b > 0, pairs
       .filter(([a, b]) => a !== 0 && b !== 0)),
 
     testOp('multiply', '*', flooredPairs),
@@ -79,21 +79,11 @@ tester(__filename, ex => {
     testMath('round', single),
     testMath('trunc', single),
 
-    ex.test.against('odd', isOdd, flooredSingle),
-    ex.test.against('even', n => !isOdd(n), flooredSingle),
+    test.against('odd', isOdd, flooredSingle),
+    test.against('even', n => !isOdd(n), flooredSingle),
 
-    ex.test.against('clamp', (n, max) => n < max ? n : max, pairs),
-    ex.test.against('rotate', (n, max) => n % max, flooredPairs
+    test.against('clamp', (n, max) => n < max ? n : max, pairs),
+    test.against('rotate', (n, max) => n % max, flooredPairs
       .filter(([ a, b ]) => a > 0 && b > 0)),
-
-    ex.describe('BONUS', [
-      ex.test('while is not used')
-        .value(ex.$('WhileStatement').length)
-        .equal(0, 'Use recursion instead of while loops'),
-    ].concat(ex.$('arrow').map(def =>
-      ex.test(`function line ${def.loc.start.line} column ${
-        def.loc.start.column} is a single expression`)
-        .value(def.body.type)
-        .notEqual('BlockStatement')))),
   ]
 })
