@@ -81,9 +81,5 @@ tester(__filename, ({ test, describe, exports, code, $ }) => {
 
     test.against('odd', isOdd, flooredSingle),
     test.against('even', n => !isOdd(n), flooredSingle),
-
-    test.against('clamp', (n, max) => n < max ? n : max, pairs),
-    test.against('rotate', (n, max) => n % max, flooredPairs
-      .filter(([ a, b ]) => a > 0 && b > 0)),
   ]
 })
