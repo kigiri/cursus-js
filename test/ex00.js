@@ -39,20 +39,36 @@ tester(__filename, ({ describe, test, code, exports }) => [
       .map('length')
       .equal(1)
     ,
-  ].concat([ 'str', 'bool', 'num', 'arr', 'fn', 'undefined' ].map(key =>
-    test(`calling function fn with argument '${key
+  ].concat([ 5, 'pouet', { lol: 'xD' }, Symbol() ]
+    .map(val => ({ val, key: stringify(val) }))
+    .map(({ val, key }) =>
+      test(`calling function fn with argument ${key} should return ${key}`)
+        .value(exports.fn)
+        .map(fn => fn(val))
+        .equal(val, `fn(${key}) === ${key}`)))),
+  describe('get', [
+    test.defined('get'),
+    test.type('get', Function),
+    test('should take 1 argument')
+      .value(exports.get)
+      .map('length')
+      .equal(1)
+    ,
+  ].concat([ 'str', 'bool', 'num', 'arr', 'fn', 'get', '42' ].map(key =>
+    test(`calling function get with argument '${key
       }' should return ${stringify(exports[key])}`)
-      .value(exports.fn)
-      .map(fn => fn(key))
-      .deepEqual(exports[key])))),
+      .value(exports.get)
+      .map(get => get(key))
+      .deepEqual(exports[key],
+        `get(${stringify(key)}) === ${stringify(exports[key])}`)))),
   describe('obj', [
     test.defined('obj'),
     test.type('obj', Object),
-    test('should have 6 elements')
+    test('should have 8 elements')
       .value(exports.obj)
       .map(Object.keys)
       .map('length')
-      .equal(7)
+      .equal(8)
     ,
     test(`obj['spaced key'] should equal true`)
       .value(exports.obj)
@@ -71,8 +87,4 @@ tester(__filename, ({ describe, test, code, exports }) => [
       .equal(exports.obj)
     ,
   ])),
-
-  describe('BONUS', [
-
-  ]),
 ])
