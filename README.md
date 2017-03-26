@@ -8,13 +8,6 @@ git clone --recursive https://github.com/kigiri/cursus-js.git
 ```
 
 #### start it:
-with npm
-```shell
-cd cursus-js
-npm install
-npm test
-```
-
 with yarn
 ```shell
 cd cursus-js
@@ -22,7 +15,14 @@ yarn
 yarn test
 ```
 
-you can directly try to simply run :
+..or with npm
+```shell
+cd cursus-js
+npm install
+npm test
+```
+
+.. or you can directly try to simply run :
 ```shell
 cursus-js/bin/bootstrap.js
 ```
